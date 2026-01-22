@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/public.css' %}">
+<style>
+@keyframes checkmark {
+    0% {
+        stroke-dashoffset: 100;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke: #4CAF50;
+    animation: checkmark 0.6s ease-in-out 0.4s forwards;
+}
+
+.checkmark-check {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke: #4CAF50;
+    animation: checkmark 0.3s ease-in-out 0.8s forwards;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section" style="min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; padding: 3rem 2rem;">
+            <!-- Animated Checkmark -->
+            <svg width="100" height="100" viewBox="0 0 52 52" style="margin: 0 auto 2rem;">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" stroke-width="2"/>
+                <path class="checkmark-check" fill="none" stroke-width="3" d="M14 27l7 7 16-16"/>
+            </svg>
+            
+            <h1 style="color: #4CAF50; margin-bottom: 1rem;">Presente Confirmado!</h1>
+            <div class="divider"></div>
+            
+            <div style="margin: 2rem 0;">
+                <p style="font-size: 1.25rem; margin-bottom: 1rem;">
+                    Muito obrigado, <strong>{{ payment.buyer_name }}</strong>!
+                </p>
+                <p style="color: #666; margin-bottom: 2rem;">
+                    Seu presente foi registrado com sucesso e estamos extremamente gratos por sua generosidade.
+                </p>
+                
+                <!-- Payment Details -->
+                <div class="card" style="background: var(--light); text-align: left; margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1rem;">Detalhes do Presente</h3>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray);">
+                        <span>Presente:</span>
+                        <strong>{{ payment.gift.name }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray);">
+                        <span>Quantidade:</span>
+                        <strong>{{ payment.quantity }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--gray);">
+                        <span>Valor:</span>
+                        <strong style="color: var(--primary);">R$ {{ payment.amount|floatformat:2 }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Método:</span>
+                        <strong>{{ payment.get_payment_method_display }}</strong>
+                    </div>
+                </div>
+                
+                {% if payment.message %}
+                <div class="card" style="background: var(--light); text-align: left;">
+                    <h4 style="margin-bottom: 0.5rem;">Sua Mensagem:</h4>
+                    <p style="font-style: italic;">"{{ payment.message }}"</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <p style="font-family: var(--font-script); font-size: 2rem; color: var(--primary); margin-bottom: 1rem;">
+                    Com amor e gratidão,
+                </p>
+                <p style="font-weight: 600; font-size: 1.25rem;">
+                    {{ GROOM_NAME }} & {{ BRIDE_NAME }}
+                </p>
+            </div>
+            
+            <div style="margin-top: 3rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{% url 'gifts:list' %}" class="btn btn-outline">
+                    <i class="fas fa-gift"></i> Ver Outros Presentes
+                </a>
+                <a href="{% url 'core:home' %}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Voltar ao Início
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

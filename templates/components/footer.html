@@ -1,0 +1,20 @@
+{% load static %}
+<footer class="footer">
+    <div class="container">
+        <div class="footer-hashtag">#{{ GROOM_NAME }}{{ BRIDE_NAME }}</div>
+        <p class="footer-text">
+            Obrigado por fazer parte do nosso dia especial!
+        </p>
+        <p class="footer-text">
+            {{ WEDDING_DATE|date:"d/m/Y" }}
+        </p>
+        
+        <div class="footer-socials">
+            <!-- Add social links if needed -->
+        </div>
+        
+        <div style="margin-top: 2rem; opacity: 0.6; font-size: 0.875rem;">
+            &copy; 2026 {{ GROOM_NAME }} & {{ BRIDE_NAME }}. Todos os direitos reservados.
+        </div>
+    </div>
+</footer>
