@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/public.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1920');">
+    <div class="hero-content">
+        <h1 class="hero-names">{{ GROOM_NAME }} & {{ BRIDE_NAME }}</h1>
+        <p class="hero-date">{{ WEDDING_DATE|date:"d de F de Y - H:i" }}</p>
+        {% include 'components/countdown.html' %}
+        <a href="#confirmacao" class="btn btn-primary btn-large">Confirme sua Presença</a>
+    </div>
+    <div class="scroll-indicator">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
+
+<!-- Save the Date -->
+<section class="section section-light">
+    <div class="container text-center">
+        <i class="fas fa-calendar-heart" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+        <h2 class="fade-in">Salve a Data</h2>
+        <div class="divider"></div>
+        <p style="max-width: 600px; margin: 0 auto; font-size: 1.125rem; line-height: 1.8;">
+            Com imensa alegria, convidamos você para celebrar conosco o nosso casamento. 
+            Sua presença será o nosso maior presente!
+        </p>
+    </div>
+</section>
+
+<!-- Nossa História -->
+<section class="section" id="nossa-historia">
+    <div class="container">
+        <h2 class="text-center fade-in">Nossa História</h2>
+        <div class="divider"></div>
+        
+        <div class="timeline">
+            <div class="timeline-item fade-in">
+                <div class="timeline-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2020</div>
+                    <h3 class="timeline-title">O Primeiro Encontro</h3>
+                    <p>Foi amor à primeira vista. Nossos caminhos se cruzaram e nunca mais nos separamos.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item fade-in">
+                <div class="timeline-icon">
+                    <i class="fas fa-ring"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2024</div>
+                    <h3 class="timeline-title">O Pedido</h3>
+                    <p>Um momento inesquecível que marcou o início desta nova jornada juntos.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item fade-in">
+                <div class="timeline-icon">
+                    <i class="fas fa-church"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-date">2026</div>
+                    <h3 class="timeline-title">O Grande Dia</h3>
+                    <p>E agora chegou o momento de celebrar nosso amor com as pessoas que mais amamos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- O Grande Dia -->
+<section class="section section-light">
+    <div class="container">
+        <h2 class="text-center fade-in">O Grande Dia</h2>
+        <div class="divider"></div>
+        
+        <div class="grid grid-2" style="margin-top: 3rem;">
+            <div class="card card-glass fade-in">
+                <i class="fas fa-church" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                <h3>Cerimônia</h3>
+                <p style="margin: 1rem 0;">{{ WEDDING_DATE|date:"H:i" }}</p>
+                <p>{{ event_settings.ceremony_location_name|default:"Local da Cerimônia" }}</p>
+                <a href="{% url 'core:location' %}" class="btn btn-outline" style="margin-top: 1rem;">
+                    <i class="fas fa-map-marker-alt"></i> Ver no Mapa
+                </a>
+            </div>
+            
+            <div class="card card-glass fade-in">
+                <i class="fas fa-glass-cheers" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                <h3>Festa</h3>
+                <p style="margin: 1rem 0;">Logo após a cerimônia</p>
+                <p>{{ event_settings.party_location_name|default:"Local da Festa" }}</p>
+                <a href="{% url 'core:location' %}" class="btn btn-outline" style="margin-top: 1rem;">
+                    <i class="fas fa-map-marker-alt"></i> Ver no Mapa
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final -->
+<section class="section section-image" style="background-image: url('https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1920');" id="confirmacao">
+    <div class="section-content">
+        <div class="container text-center" style="color: white;">
+            <h2 class="fade-in" style="color: white;">Queremos Você Conosco!</h2>
+            <div class="divider"></div>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Para confirmar sua presença, entre em contato conosco e receberá um link personalizado.
+            </p>
+            <a href="{% url 'gifts:list' %}" class="btn btn-primary btn-large">
+                <i class="fas fa-gift"></i> Ver Lista de Presentes
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/countdown.js' %}"></script>
+{% endblock %}

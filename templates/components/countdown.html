@@ -1,0 +1,19 @@
+{% load static %}
+<div id="countdown" class="countdown" data-target="{{ WEDDING_DATE|date:'Y-m-d H:i:s' }}">
+    <div class="countdown-item days">
+        <div class="countdown-value">0</div>
+        <div class="countdown-label">Dias</div>
+    </div>
+    <div class="countdown-item hours">
+        <div class="countdown-value">00</div>
+        <div class="countdown-label">Horas</div>
+    </div>
+    <div class="countdown-item minutes">
+        <div class="countdown-value">00</div>
+        <div class="countdown-label">Minutos</div>
+    </div>
+    <div class="countdown-item seconds">
+        <div class="countdown-value">00</div>
+        <div class="countdown-label">Segundos</div>
+    </div>
+</div>

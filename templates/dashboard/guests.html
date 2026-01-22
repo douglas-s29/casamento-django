@@ -1,0 +1,119 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block page_title %}Gerenciar Convidados{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="table-header">
+        <h2 class="table-title">Lista de Convidados</h2>
+        <button class="btn btn-primary" onclick="openModal('addGuestModal')">
+            <i class="fas fa-user-plus"></i> Novo Convidado
+        </button>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters" style="padding: 1rem; border-bottom: 1px solid var(--gray);">
+        <button class="filter-btn active" data-filter="all">Todos ({{ guests.count }})</button>
+        <button class="filter-btn" data-filter="confirmed">Confirmados</button>
+        <button class="filter-btn" data-filter="pending">Pendentes</button>
+        <button class="filter-btn" data-filter="declined">Recusaram</button>
+    </div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Status</th>
+                <th>Confirmado em</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for guest in guests %}
+            <tr data-status="{{ guest.status }}">
+                <td><strong>{{ guest.name }}</strong></td>
+                <td>{{ guest.email|default:"-" }}</td>
+                <td>{{ guest.phone|default:"-" }}</td>
+                <td>
+                    {% if guest.status == 'confirmed' %}
+                        <span class="badge badge-success">Confirmado</span>
+                    {% elif guest.status == 'declined' %}
+                        <span class="badge badge-danger">Não Pode</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pendente</span>
+                    {% endif %}
+                </td>
+                <td>{{ guest.confirmed_at|date:"d/m/Y H:i"|default:"-" }}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-icon" title="Copiar Link" 
+                                data-copy="{{ request.scheme }}://{{ request.get_host }}{% url 'guests:rsvp' guest.unique_link %}">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button class="btn-icon" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-icon danger" title="Excluir" data-delete>
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem; color: #666;">
+                    <i class="fas fa-users" style="font-size: 3rem; opacity: 0.3; display: block; margin-bottom: 1rem;"></i>
+                    Nenhum convidado cadastrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Guest Modal -->
+<div class="modal-overlay" id="addGuestModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Novo Convidado</h2>
+            <button class="modal-close" onclick="closeModal('addGuestModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="" data-validate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label" for="name">Nome Completo *</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">E-mail</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Telefone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="(00) 00000-0000">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="notes">Observações</label>
+                    <textarea class="form-control" id="notes" name="notes"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('addGuestModal')">Cancelar</button>
+            <button class="btn btn-primary" type="submit" form="addGuestForm">
+                <i class="fas fa-save"></i> Salvar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

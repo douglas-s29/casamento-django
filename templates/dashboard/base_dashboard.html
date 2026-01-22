@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel Administrativo{% endblock %} - {{ GROOM_NAME }} & {{ BRIDE_NAME }}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">{{ GROOM_NAME }} & {{ BRIDE_NAME }}</div>
+            
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:home' %}" class="sidebar-menu-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <i class="fas fa-chart-line sidebar-menu-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:guests' %}" class="sidebar-menu-link {% if request.resolver_match.url_name == 'guests' %}active{% endif %}">
+                        <i class="fas fa-users sidebar-menu-icon"></i>
+                        <span>Convidados</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:gifts' %}" class="sidebar-menu-link {% if request.resolver_match.url_name == 'gifts' %}active{% endif %}">
+                        <i class="fas fa-gift sidebar-menu-icon"></i>
+                        <span>Presentes</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:payments' %}" class="sidebar-menu-link {% if request.resolver_match.url_name == 'payments' %}active{% endif %}">
+                        <i class="fas fa-credit-card sidebar-menu-icon"></i>
+                        <span>Pagamentos</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:settings' %}" class="sidebar-menu-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                        <i class="fas fa-cog sidebar-menu-icon"></i>
+                        <span>Configurações</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item" style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                    <a href="{% url 'core:home' %}" class="sidebar-menu-link">
+                        <i class="fas fa-external-link-alt sidebar-menu-icon"></i>
+                        <span>Ver Site Público</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="{% url 'dashboard:logout' %}" class="sidebar-menu-link">
+                        <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
+                        <span>Sair</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+                <div class="dashboard-user">
+                    <div class="dashboard-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <span>{{ user.username }}</span>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <div class="dashboard-content">
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="margin-bottom: 1rem; padding: 1rem; border-radius: 8px; background: {% if message.tags == 'success' %}#4CAF50{% elif message.tags == 'error' %}#F44336{% else %}#2196F3{% endif %}; color: white;">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/admin.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

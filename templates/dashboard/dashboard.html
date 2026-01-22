@@ -1,0 +1,158 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon guests">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-value">{{ total_guests }}</div>
+        <div class="stat-label">Total de Convidados</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon confirmed">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-value">{{ confirmed_guests }}</div>
+        <div class="stat-label">Confirmados</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon revenue">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-value">R$ {{ total_revenue|floatformat:2 }}</div>
+        <div class="stat-label">Total Arrecadado</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon gifts">
+            <i class="fas fa-gift"></i>
+        </div>
+        <div class="stat-value">{{ gifts_sold }}</div>
+        <div class="stat-label">Presentes Vendidos</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card" style="margin-bottom: 2rem;">
+    <h2 style="margin-bottom: 1rem;">Ações Rápidas</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'dashboard:guests' %}" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Adicionar Convidado
+        </a>
+        <a href="{% url 'dashboard:gifts' %}" class="btn btn-outline">
+            <i class="fas fa-plus"></i> Adicionar Presente
+        </a>
+        <a href="{% url 'core:home' %}" target="_blank" class="btn btn-outline">
+            <i class="fas fa-external-link-alt"></i> Ver Site Público
+        </a>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="grid grid-2">
+    <div class="table-container">
+        <div class="table-header">
+            <h3 class="table-title">Confirmações Recentes</h3>
+            <a href="{% url 'dashboard:guests' %}" style="color: var(--primary); font-size: 0.875rem;">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Convidado</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in recent_confirmations %}
+                <tr>
+                    <td>{{ guest.name }}</td>
+                    <td>
+                        {% if guest.status == 'confirmed' %}
+                            <span class="badge badge-success">Confirmado</span>
+                        {% elif guest.status == 'declined' %}
+                            <span class="badge badge-danger">Não Pode</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pendente</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ guest.confirmed_at|date:"d/m/Y H:i"|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #666;">
+                        Nenhuma confirmação recente
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="table-container">
+        <div class="table-header">
+            <h3 class="table-title">Pagamentos Recentes</h3>
+            <a href="{% url 'dashboard:payments' %}" style="color: var(--primary); font-size: 0.875rem;">
+                Ver todos <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Comprador</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in recent_payments %}
+                <tr>
+                    <td>{{ payment.buyer_name }}</td>
+                    <td>R$ {{ payment.amount|floatformat:2 }}</td>
+                    <td>
+                        {% if payment.status == 'confirmed' or payment.status == 'received' %}
+                            <span class="badge badge-success">Pago</span>
+                        {% elif payment.status == 'pending' %}
+                            <span class="badge badge-warning">Pendente</span>
+                        {% else %}
+                            <span class="badge badge-danger">Cancelado</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #666;">
+                        Nenhum pagamento recente
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Event Info -->
+<div class="card" style="margin-top: 2rem; background: var(--gradient-gold); color: white;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div>
+            <h2 style="color: white; margin-bottom: 0.5rem;">{{ GROOM_NAME }} & {{ BRIDE_NAME }}</h2>
+            <p style="opacity: 0.95;">{{ WEDDING_DATE|date:"d de F de Y - H:i" }}</p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem;">
+                {{ days_until }} dias
+            </div>
+            <div style="opacity: 0.95;">para o grande dia!</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block page_title %}Configurações{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="margin-bottom: 2rem;">Configurações do Evento</h2>
+    
+    <form method="post" enctype="multipart/form-data" data-validate>
+        {% csrf_token %}
+        
+        <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-heart" style="color: var(--primary);"></i> Dados dos Noivos
+        </h3>
+        
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="groom_name">Nome do Noivo *</label>
+                <input type="text" class="form-control" id="groom_name" name="groom_name" 
+                       value="{{ event_settings.groom_name|default:GROOM_NAME }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="bride_name">Nome da Noiva *</label>
+                <input type="text" class="form-control" id="bride_name" name="bride_name" 
+                       value="{{ event_settings.bride_name|default:BRIDE_NAME }}" required>
+            </div>
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-calendar" style="color: var(--primary);"></i> Data e Horário
+        </h3>
+        
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="wedding_date">Data do Casamento *</label>
+                <input type="date" class="form-control" id="wedding_date" name="wedding_date" 
+                       value="{{ event_settings.wedding_date|date:'Y-m-d' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="wedding_time">Horário *</label>
+                <input type="time" class="form-control" id="wedding_time" name="wedding_time" 
+                       value="{{ event_settings.wedding_date|date:'H:i' }}" required>
+            </div>
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Local da Cerimônia
+        </h3>
+        
+        <div class="form-group">
+            <label class="form-label" for="ceremony_location_name">Nome do Local *</label>
+            <input type="text" class="form-control" id="ceremony_location_name" name="ceremony_location_name" 
+                   value="{{ event_settings.ceremony_location_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="ceremony_location_address">Endereço Completo *</label>
+            <textarea class="form-control" id="ceremony_location_address" name="ceremony_location_address" 
+                      required>{{ event_settings.ceremony_location_address }}</textarea>
+        </div>
+        
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label class="form-label" for="ceremony_location_lat">Latitude</label>
+                <input type="text" class="form-control" id="ceremony_location_lat" name="ceremony_location_lat" 
+                       value="{{ event_settings.ceremony_location_lat }}" placeholder="-23.550520">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="ceremony_location_lng">Longitude</label>
+                <input type="text" class="form-control" id="ceremony_location_lng" name="ceremony_location_lng" 
+                       value="{{ event_settings.ceremony_location_lng }}" placeholder="-46.633308">
+            </div>
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-glass-cheers" style="color: var(--primary);"></i> Local da Festa
+        </h3>
+        
+        <div class="form-group">
+            <label class="form-label" for="party_location_name">Nome do Local</label>
+            <input type="text" class="form-control" id="party_location_name" name="party_location_name" 
+                   value="{{ event_settings.party_location_name }}">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="party_location_address">Endereço Completo</label>
+            <textarea class="form-control" id="party_location_address" name="party_location_address">{{ event_settings.party_location_address }}</textarea>
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-image" style="color: var(--primary);"></i> Imagens
+        </h3>
+        
+        <div class="form-group">
+            <label class="form-label" for="hero_image">Imagem de Fundo (Hero)</label>
+            <input type="file" class="form-control" id="hero_image" name="hero_image" accept="image/*">
+            {% if event_settings.hero_image %}
+                <img src="{{ event_settings.hero_image.url }}" alt="Hero" style="max-width: 200px; margin-top: 0.5rem; border-radius: 8px;">
+            {% endif %}
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--gray);">
+            <i class="fas fa-comment" style="color: var(--primary);"></i> Mensagens
+        </h3>
+        
+        <div class="form-group">
+            <label class="form-label" for="thank_you_message">Mensagem de Agradecimento</label>
+            <textarea class="form-control" id="thank_you_message" name="thank_you_message">{{ event_settings.thank_you_message }}</textarea>
+        </div>
+        
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary btn-large">
+                <i class="fas fa-save"></i> Salvar Configurações
+            </button>
+            <a href="{% url 'dashboard:home' %}" class="btn btn-outline">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel Administrativo</title>
+    
+    {% load static %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h2 class="login-title">Área Administrativa</h2>
+            
+            {% if form.errors %}
+            <div style="background: #FFEBEE; color: #C62828; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <i class="fas fa-exclamation-circle"></i>
+                Usuário ou senha incorretos.
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'dashboard:login' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label" for="id_username">Usuário</label>
+                    <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="id_password">Senha</label>
+                    <input type="password" name="password" id="id_password" class="form-control" required>
+                </div>
+                
+                <input type="hidden" name="next" value="{{ next }}">
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+            
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="{% url 'core:home' %}" style="color: var(--primary); font-size: 0.875rem;">
+                    <i class="fas fa-arrow-left"></i> Voltar ao site
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

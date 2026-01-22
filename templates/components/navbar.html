@@ -1,0 +1,15 @@
+{% load static %}
+<nav class="navbar">
+    <div class="container">
+        <a href="{% url 'core:home' %}" class="navbar-brand">
+            {{ GROOM_NAME }} & {{ BRIDE_NAME }}
+        </a>
+        <div class="navbar-menu">
+            <a href="{% url 'core:home' %}" class="navbar-link">Início</a>
+            <a href="#nossa-historia" class="navbar-link">Nossa História</a>
+            <a href="{% url 'gifts:list' %}" class="navbar-link">Presentes</a>
+            <a href="{% url 'core:location' %}" class="navbar-link">Local</a>
+            <a href="#confirmacao" class="navbar-link btn btn-primary">Confirmar Presença</a>
+        </div>
+    </div>
+</nav>
