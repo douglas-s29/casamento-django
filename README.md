@@ -1,12 +1,12 @@
 # 💍 Sistema Completo de Gerenciamento de Casamento - Django
 
-Sistema completo para gerenciamento de casamento com site público responsivo e área administrativa separada, desenvolvido com Django 4.2.
+Sistema completo para gerenciamento de casamento com site público responsivo e área administrativa separada, desenvolvido com Django 4.2 LTS.
 
 ![Home Page](https://github.com/user-attachments/assets/9b5935cf-25c2-4f69-8e06-5dfb00b76c3c)
 
 ## 🚀 Tecnologias
 
-- **Backend**: Django 4.2.9
+- **Backend**: Django 4.2.26 (LTS with security patches)
 - **Python**: 3.10+
 - **Banco de Dados**: SQLite (embutido)
 - **Gateway de Pagamento**: Asaas (PIX + Cartão de Crédito)
