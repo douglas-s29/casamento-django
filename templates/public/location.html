@@ -74,6 +74,7 @@
         
         <!-- Map -->
         <div class="card fade-in" style="margin-top: 3rem; padding: 0; overflow: hidden;">
+            {% if GOOGLE_MAPS_API_KEY %}
             <iframe 
                 width="100%" 
                 height="450" 
@@ -81,8 +82,14 @@
                 loading="lazy" 
                 allowfullscreen
                 referrerpolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q={{ event_settings.ceremony_location_address|urlencode }}">
+                src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q={{ event_settings.ceremony_location_address|urlencode }}">
             </iframe>
+            {% else %}
+            <div style="padding: 3rem; text-align: center; background: var(--light);">
+                <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                <p style="color: #666;">Configure a API do Google Maps em .env para exibir o mapa</p>
+            </div>
+            {% endif %}
         </div>
         
         <!-- Additional Info -->

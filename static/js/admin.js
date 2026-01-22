@@ -82,3 +82,20 @@ function showToast(message, duration = 3000) {
     setTimeout(() => toast.remove(), 300);
   }, duration);
 }
+
+// View payment details (placeholder for future implementation)
+function viewPayment(paymentId) {
+  alert('Ver detalhes do pagamento #' + paymentId + '\n\nFuncionalidade em desenvolvimento.');
+}
+
+// Edit gift (placeholder for future implementation)
+function editGift(giftId) {
+  alert('Editar presente #' + giftId + '\n\nFuncionalidade em desenvolvimento.');
+}
+
+// Toggle gift active status (placeholder for future implementation)
+function toggleGift(giftId) {
+  if (confirm('Deseja ativar/desativar este presente?')) {
+    alert('Funcionalidade em desenvolvimento.');
+  }
+}

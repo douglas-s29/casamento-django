@@ -107,7 +107,10 @@ WEDDING_BRIDE_NAME = config('BRIDE_NAME', default='Noiva')
 WEDDING_DATE = config('WEDDING_DATE', default='2026-12-31 18:00:00')
 WEDDING_LOCATION = config('WEDDING_LOCATION', default='Local da Cerimônia')
 
+# Google Maps API (optional, for location page)
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default='')
+
 # Login URL
-LOGIN_URL = '/admin/login/'
+LOGIN_URL = '/painel/login/'
 LOGIN_REDIRECT_URL = '/painel/'
 LOGOUT_REDIRECT_URL = '/'

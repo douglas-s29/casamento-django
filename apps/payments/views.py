@@ -10,23 +10,39 @@ def process_payment(request, gift_id):
     gift = get_object_or_404(Gift, pk=gift_id, is_active=True)
     
     if request.method == 'POST':
+        # Validate quantity
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+            if quantity < 1 or quantity > 10:  # Reasonable limit
+                return render(request, 'public/gifts.html', {
+                    'error': 'Quantidade inválida. Escolha entre 1 e 10.'
+                })
+            if quantity > gift.available_quantity:
+                return render(request, 'public/gifts.html', {
+                    'error': 'Quantidade solicitada não disponível.'
+                })
+        except (ValueError, TypeError):
+            return render(request, 'public/gifts.html', {
+                'error': 'Quantidade inválida.'
+            })
+        
         # Create payment record
         payment = Payment.objects.create(
             gift=gift,
-            buyer_name=request.POST.get('name'),
-            buyer_email=request.POST.get('email'),
-            buyer_phone=request.POST.get('phone', ''),
-            quantity=int(request.POST.get('quantity', 1)),
-            amount=gift.price * int(request.POST.get('quantity', 1)),
-            payment_method=request.POST.get('payment_method'),
-            message=request.POST.get('message', '')
+            buyer_name=request.POST.get('name', '').strip(),
+            buyer_email=request.POST.get('email', '').strip(),
+            buyer_phone=request.POST.get('phone', '').strip(),
+            quantity=quantity,
+            amount=gift.price * quantity,
+            payment_method=request.POST.get('payment_method', 'pix'),
+            message=request.POST.get('message', '').strip()
         )
         
         # TODO: Integrate with Asaas API
         # For now, just redirect to success
         return redirect('payments:success', payment_id=payment.id)
     
-    return render(request, 'public/payment.html', {'gift': gift})
+    return render(request, 'public/gifts.html', {'gift': gift})
 
 def success(request, payment_id):
     """Payment success page"""

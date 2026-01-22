@@ -7,6 +7,7 @@ def wedding_context(request):
         'GROOM_NAME': settings.WEDDING_GROOM_NAME,
         'BRIDE_NAME': settings.WEDDING_BRIDE_NAME,
         'WEDDING_DATE': settings.WEDDING_DATE,
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY,
     }
     
     # Try to get from database
