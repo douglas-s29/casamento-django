@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Convite - {{ guest.nome }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .convite-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .convite-header h2 {
+        color: #667eea;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .convite-header p {
+        font-size: 1.2em;
+        color: #666;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input[type="radio"] {
+        margin-right: 10px;
+    }
+    
+    .radio-group {
+        display: flex;
+        gap: 30px;
+        margin-top: 10px;
+    }
+    
+    .radio-option {
+        display: flex;
+        align-items: center;
+        font-size: 1.1em;
+    }
+    
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 1em;
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    
+    .status-confirmado {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-nao-confirmado {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .status-pendente {
+        background: #fff3cd;
+        color: #856404;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="convite-header">
+        <h2>💌 Convite Especial</h2>
+        <p>Olá, <strong>{{ guest.nome }}</strong>!</p>
+        <p>Você está convidado(a) para o nosso casamento! 💕</p>
+    </div>
+    
+    {% if guest.confirmou_presenca is not None %}
+    <div style="text-align: center; margin: 30px 0;">
+        <h3>Status da Confirmação:</h3>
+        {% if guest.confirmou_presenca %}
+        <span class="status-badge status-confirmado">✓ Presença Confirmada</span>
+        <p style="margin-top: 20px;">Obrigado por confirmar! Estamos muito felizes que você estará conosco! ❤️</p>
+        {% else %}
+        <span class="status-badge status-nao-confirmado">✗ Não Confirmado</span>
+        <p style="margin-top: 20px;">Obrigado por nos avisar. Vamos sentir sua falta! 😢</p>
+        {% endif %}
+        
+        {% if guest.data_confirmacao %}
+        <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+            Confirmado em: {{ guest.data_confirmacao|date:"d/m/Y \à\s H:i" }}
+        </p>
+        {% endif %}
+        
+        {% if guest.observacoes %}
+        <div style="margin-top: 20px; text-align: left;">
+            <strong>Suas observações:</strong>
+            <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                {{ guest.observacoes }}
+            </p>
+        </div>
+        {% endif %}
+        
+        <p style="margin-top: 30px;">Deseja alterar sua confirmação?</p>
+    </div>
+    {% else %}
+    <div style="text-align: center; margin: 30px 0;">
+        <span class="status-badge status-pendente">⏳ Aguardando Confirmação</span>
+    </div>
+    {% endif %}
+    
+    <form method="post" style="margin-top: 30px;">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Você confirma sua presença?</label>
+            <div class="radio-group">
+                <div class="radio-option">
+                    <input type="radio" id="sim" name="confirmou_presenca" value="sim" required>
+                    <label for="sim" style="margin-bottom: 0; font-weight: normal;">✓ Sim, estarei presente!</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="nao" name="confirmou_presenca" value="nao">
+                    <label for="nao" style="margin-bottom: 0; font-weight: normal;">✗ Não poderei comparecer</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="observacoes">Observações (opcional):</label>
+            <textarea name="observacoes" id="observacoes" placeholder="Alguma observação ou mensagem para os noivos...">{{ guest.observacoes }}</textarea>
+        </div>
+        
+        <div style="text-align: center;">
+            <button type="submit" class="btn">Confirmar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
