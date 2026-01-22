@@ -1,0 +1,126 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block page_title %}Gerenciar Presentes{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <h2>Lista de Presentes</h2>
+    <button class="btn btn-primary" onclick="openModal('addGiftModal')">
+        <i class="fas fa-plus"></i> Novo Presente
+    </button>
+</div>
+
+<div class="grid grid-4">
+    {% for gift in gifts %}
+    <div class="gift-card">
+        <img src="{{ gift.image.url }}" alt="{{ gift.name }}" class="gift-image"
+             onerror="this.src='https://via.placeholder.com/400x300?text=Presente'">
+        
+        {% if gift.is_active %}
+            {% if gift.is_available %}
+                <span class="gift-badge">Disponível</span>
+            {% else %}
+                <span class="gift-badge unavailable">Esgotado</span>
+            {% endif %}
+        {% else %}
+            <span class="gift-badge unavailable">Inativo</span>
+        {% endif %}
+        
+        <div class="gift-content">
+            <h3 class="gift-name">{{ gift.name }}</h3>
+            <p class="gift-description">{{ gift.description }}</p>
+            <div class="gift-price">R$ {{ gift.price|floatformat:2 }}</div>
+            
+            <div class="gift-progress">
+                <div class="gift-progress-text">
+                    {{ gift.purchased_quantity }} / {{ gift.total_quantity }} vendidos
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ gift.progress_percentage }}%;"></div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                <button class="btn btn-outline" style="flex: 1;" onclick="editGift({{ gift.id }})">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-outline" onclick="toggleGift({{ gift.id }})">
+                    <i class="fas fa-{% if gift.is_active %}eye-slash{% else %}eye{% endif %}"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <i class="fas fa-gift" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem; opacity: 0.3;"></i>
+        <p style="color: #666;">Nenhum presente cadastrado ainda.</p>
+        <button class="btn btn-primary" onclick="openModal('addGiftModal')" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i> Adicionar Primeiro Presente
+        </button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Add Gift Modal -->
+<div class="modal-overlay" id="addGiftModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Novo Presente</h2>
+            <button class="modal-close" onclick="closeModal('addGiftModal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="" enctype="multipart/form-data" data-validate>
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label" for="image">Imagem *</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="name">Nome do Presente *</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description">Descrição *</label>
+                    <textarea class="form-control" id="description" name="description" required></textarea>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="price">Valor (R$) *</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="total_quantity">Quantidade *</label>
+                        <input type="number" class="form-control" id="total_quantity" name="total_quantity" min="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="category">Categoria *</label>
+                    <select class="form-control" id="category" name="category" required>
+                        <option value="cozinha">Cozinha</option>
+                        <option value="quarto">Quarto</option>
+                        <option value="banheiro">Banheiro</option>
+                        <option value="sala">Sala</option>
+                        <option value="decoracao">Decoração</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('addGiftModal')">Cancelar</button>
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-save"></i> Salvar
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
