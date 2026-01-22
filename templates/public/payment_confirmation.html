@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmação de Pagamento{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .success-icon {
+        font-size: 5em;
+        margin: 20px 0;
+    }
+    
+    .confirmation-container h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+    }
+    
+    .payment-details {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 30px 0;
+        text-align: left;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .qrcode-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 30px 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .qrcode-container img {
+        max-width: 300px;
+        margin: 20px auto;
+        display: block;
+    }
+    
+    .pix-code {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        word-break: break-all;
+        font-family: monospace;
+        margin-top: 20px;
+    }
+    
+    .copy-button {
+        margin-top: 15px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .status-confirmed {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .thank-you-message {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 30px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="confirmation-container">
+        <div class="success-icon">🎉</div>
+        <h2>Pagamento Iniciado com Sucesso!</h2>
+        
+        {% if payment.status == 'confirmed' or payment.status == 'received' %}
+        <span class="status-badge status-confirmed">✓ Pagamento Confirmado</span>
+        {% else %}
+        <span class="status-badge status-pending">⏳ Aguardando Pagamento</span>
+        {% endif %}
+        
+        <div class="payment-details">
+            <h3 style="color: #667eea; margin-bottom: 20px;">Detalhes do Pagamento</h3>
+            
+            <div class="detail-row">
+                <span><strong>Comprador:</strong></span>
+                <span>{{ payment.nome_comprador }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span><strong>Presente:</strong></span>
+                <span>{{ payment.presente.nome }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span><strong>Quantidade:</strong></span>
+                <span>{{ payment.quantidade }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span><strong>Valor Total:</strong></span>
+                <span style="color: #28a745; font-weight: bold;">R$ {{ payment.valor_total }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span><strong>Método:</strong></span>
+                <span>{{ payment.get_metodo_pagamento_display }}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span><strong>Status:</strong></span>
+                <span>{{ payment.get_status_display }}</span>
+            </div>
+        </div>
+        
+        {% if payment.metodo_pagamento == 'PIX' and payment.qr_code %}
+        <div class="qrcode-container">
+            <h3 style="color: #667eea; margin-bottom: 20px;">📱 Pagar com PIX</h3>
+            <p>Escaneie o QR Code abaixo ou copie o código PIX:</p>
+            
+            {% if payment.qr_code_image %}
+            <img src="data:image/png;base64,{{ payment.qr_code_image }}" alt="QR Code PIX">
+            {% endif %}
+            
+            <div class="pix-code" id="pix-code">{{ payment.qr_code }}</div>
+            
+            <button onclick="copyPixCode()" class="btn copy-button">📋 Copiar Código PIX</button>
+        </div>
+        {% elif payment.link_pagamento %}
+        <div style="margin: 30px 0;">
+            <a href="{{ payment.link_pagamento }}" target="_blank" class="btn">
+                💳 Ir para Pagamento
+            </a>
+        </div>
+        {% endif %}
+        
+        {% if payment.status == 'confirmed' or payment.status == 'received' %}
+        <div class="thank-you-message">
+            <h2 style="margin-bottom: 15px;">❤️ Muito Obrigado!</h2>
+            {% if event_settings %}
+            <p style="font-size: 1.1em; line-height: 1.8;">{{ event_settings.mensagem_agradecimento }}</p>
+            {% else %}
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                Obrigado por nos presentear! Seu carinho e generosidade significam muito para nós. 
+                Estamos muito felizes por compartilhar este momento especial com você! 💕
+            </p>
+            {% endif %}
+        </div>
+        {% else %}
+        <div style="margin: 30px 0;">
+            <p style="color: #666;">
+                Após a confirmação do pagamento, você receberá uma mensagem de agradecimento.
+            </p>
+            <p style="color: #666; margin-top: 10px; font-size: 0.9em;">
+                O pagamento pode levar alguns minutos para ser processado.
+            </p>
+        </div>
+        {% endif %}
+        
+        <div style="margin-top: 40px;">
+            <a href="{% url 'gifts:list' %}" class="btn btn-secondary">← Voltar para Lista de Presentes</a>
+            <a href="{% url 'core:home' %}" class="btn">🏠 Ir para Início</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyPixCode() {
+        const pixCode = document.getElementById('pix-code').textContent;
+        
+        navigator.clipboard.writeText(pixCode).then(function() {
+            alert('Código PIX copiado com sucesso!');
+        }, function() {
+            // Fallback para navegadores antigos
+            const textArea = document.createElement('textarea');
+            textArea.value = pixCode;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Código PIX copiado com sucesso!');
+        });
+    }
+</script>
+{% endblock %}

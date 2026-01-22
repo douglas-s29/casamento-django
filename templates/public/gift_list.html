@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Presentes{% endblock %}
+
+{% block extra_css %}
+<style>
+    .gifts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .gift-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .gift-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .gift-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        background: #f8f9fa;
+    }
+    
+    .gift-content {
+        padding: 20px;
+    }
+    
+    .gift-title {
+        color: #667eea;
+        font-size: 1.3em;
+        margin-bottom: 10px;
+    }
+    
+    .gift-description {
+        color: #666;
+        margin-bottom: 15px;
+        font-size: 0.95em;
+    }
+    
+    .gift-price {
+        font-size: 1.5em;
+        color: #28a745;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .gift-stock {
+        color: #666;
+        margin-bottom: 15px;
+        font-size: 0.9em;
+    }
+    
+    .stock-available {
+        color: #28a745;
+        font-weight: bold;
+    }
+    
+    .stock-low {
+        color: #ffc107;
+        font-weight: bold;
+    }
+    
+    .stock-out {
+        color: #dc3545;
+        font-weight: bold;
+    }
+    
+    .btn-disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+    
+    .btn-disabled:hover {
+        background: #6c757d;
+        transform: none;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .page-header h2 {
+        color: #667eea;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+    
+    .page-header p {
+        color: #666;
+        font-size: 1.1em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="page-header">
+        <h2>🎁 Lista de Presentes</h2>
+        <p>Escolha um presente e nos ajude a realizar nossos sonhos!</p>
+    </div>
+    
+    {% if gifts %}
+    <div class="gifts-grid">
+        {% for gift in gifts %}
+        <div class="gift-card">
+            {% if gift.imagem %}
+            <img src="{{ gift.imagem.url }}" alt="{{ gift.nome }}" class="gift-image">
+            {% else %}
+            <div class="gift-image" style="display: flex; align-items: center; justify-content: center; font-size: 3em;">
+                🎁
+            </div>
+            {% endif %}
+            
+            <div class="gift-content">
+                <h3 class="gift-title">{{ gift.nome }}</h3>
+                
+                {% if gift.descricao %}
+                <p class="gift-description">{{ gift.descricao|truncatewords:20 }}</p>
+                {% endif %}
+                
+                <p class="gift-price">R$ {{ gift.valor }}</p>
+                
+                <p class="gift-stock">
+                    Disponível: 
+                    {% if gift.quantidade_disponivel > 0 %}
+                        {% if gift.quantidade_disponivel < 3 %}
+                        <span class="stock-low">{{ gift.quantidade_disponivel }} unidade{{ gift.quantidade_disponivel|pluralize }}</span>
+                        {% else %}
+                        <span class="stock-available">{{ gift.quantidade_disponivel }} unidade{{ gift.quantidade_disponivel|pluralize }}</span>
+                        {% endif %}
+                    {% else %}
+                    <span class="stock-out">Esgotado</span>
+                    {% endif %}
+                </p>
+                
+                {% if gift.esta_disponivel %}
+                <a href="{% url 'gifts:detail' gift.id %}" class="btn" style="width: 100%; text-align: center;">
+                    Ver Detalhes
+                </a>
+                {% else %}
+                <button class="btn btn-disabled" disabled style="width: 100%;">
+                    Indisponível
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 50px 0;">
+        <p style="font-size: 1.2em; color: #666;">
+            Nenhum presente disponível no momento.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Início - Nosso Casamento{% endblock %}
+
+{% block header %}
+    {% if event_settings %}
+        💍 {{ event_settings.nome_noivo }} & {{ event_settings.nome_noiva }}
+    {% else %}
+        💍 Nosso Casamento
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .countdown {
+        text-align: center;
+        margin: 40px 0;
+    }
+    
+    .countdown h2 {
+        color: #667eea;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+    
+    .countdown-timer {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .time-unit {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        min-width: 100px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .time-unit .number {
+        font-size: 3em;
+        font-weight: bold;
+        color: #667eea;
+        display: block;
+    }
+    
+    .time-unit .label {
+        font-size: 0.9em;
+        color: #666;
+        text-transform: uppercase;
+    }
+    
+    .event-info {
+        text-align: center;
+        margin-top: 40px;
+    }
+    
+    .event-info h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+    
+    .event-info p {
+        font-size: 1.2em;
+        margin: 10px 0;
+    }
+    
+    .heart-animation {
+        display: inline-block;
+        animation: heartbeat 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="countdown">
+        <h2>Contagem Regressiva para o Grande Dia <span class="heart-animation">❤️</span></h2>
+        
+        {% if event_settings %}
+        <div class="countdown-timer" id="countdown">
+            <div class="time-unit">
+                <span class="number" id="days">0</span>
+                <span class="label">Dias</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="hours">0</span>
+                <span class="label">Horas</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="minutes">0</span>
+                <span class="label">Minutos</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="seconds">0</span>
+                <span class="label">Segundos</span>
+            </div>
+        </div>
+        
+        <div class="event-info">
+            <h3>📅 Data do Evento</h3>
+            <p>{{ event_settings.data_casamento|date:"d/m/Y \à\s H:i" }}</p>
+            
+            <h3 style="margin-top: 30px;">📍 Local</h3>
+            <p>{{ event_settings.local_nome }}</p>
+            <p style="font-size: 0.9em; color: #666;">{{ event_settings.local_endereco }}</p>
+        </div>
+        {% else %}
+        <p>Configure as informações do evento no painel administrativo.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" style="text-align: center;">
+    <h2 style="color: #667eea; margin-bottom: 20px;">🎁 Lista de Presentes</h2>
+    <p style="margin-bottom: 20px;">Veja nossa lista de presentes e nos ajude a realizar nossos sonhos!</p>
+    <a href="{% url 'gifts:list' %}" class="btn">Ver Lista de Presentes</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if event_settings %}
+<script>
+    // Data do casamento
+    const weddingDate = new Date("{{ event_settings.data_casamento|date:'c' }}").getTime();
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+        
+        if (distance < 0) {
+            document.getElementById('countdown').innerHTML = '<h2>🎉 O grande dia chegou! 🎉</h2>';
+            return;
+        }
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        document.getElementById('days').textContent = days;
+        document.getElementById('hours').textContent = hours;
+        document.getElementById('minutes').textContent = minutes;
+        document.getElementById('seconds').textContent = seconds;
+    }
+    
+    // Atualiza a cada segundo
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Finalizar Pagamento - {{ gift.nome }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .gift-summary {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    
+    .gift-summary h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .summary-row:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #28a745;
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .payment-method {
+        border: 2px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .payment-method:hover {
+        border-color: #667eea;
+    }
+    
+    .payment-method input[type="radio"] {
+        display: none;
+    }
+    
+    .payment-method input[type="radio"]:checked + label {
+        color: #667eea;
+        font-weight: bold;
+    }
+    
+    .payment-method label {
+        cursor: pointer;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="payment-form">
+        <h2 style="color: #667eea; text-align: center; margin-bottom: 30px;">
+            💳 Finalizar Pagamento
+        </h2>
+        
+        <div class="gift-summary">
+            <h3>Resumo do Presente</h3>
+            <div class="summary-row">
+                <span>Presente:</span>
+                <span>{{ gift.nome }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Valor unitário:</span>
+                <span>R$ {{ gift.valor }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Quantidade:</span>
+                <span id="quantity-display">1</span>
+            </div>
+            <div class="summary-row">
+                <span>Total:</span>
+                <span id="total-display">R$ {{ gift.valor }}</span>
+            </div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="nome">Nome Completo: *</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">E-mail: *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefone">Telefone:</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+            </div>
+            
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+            </div>
+            
+            <div class="form-group">
+                <label for="quantidade">Quantidade: *</label>
+                <input type="number" id="quantidade" name="quantidade" min="1" max="{{ gift.quantidade_disponivel }}" value="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Método de Pagamento: *</label>
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <input type="radio" id="pix" name="metodo_pagamento" value="PIX" required>
+                        <label for="pix">
+                            <div style="font-size: 2em; margin-bottom: 5px;">📱</div>
+                            <div>PIX</div>
+                        </label>
+                    </div>
+                    <div class="payment-method">
+                        <input type="radio" id="cartao" name="metodo_pagamento" value="CREDIT_CARD">
+                        <label for="cartao">
+                            <div style="font-size: 2em; margin-bottom: 5px;">💳</div>
+                            <div>Cartão de Crédito</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="submit" class="btn">Continuar para Pagamento</button>
+                <a href="{% url 'gifts:detail' gift.id %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const quantityInput = document.getElementById('quantidade');
+    const quantityDisplay = document.getElementById('quantity-display');
+    const totalDisplay = document.getElementById('total-display');
+    const unitPrice = {{ gift.valor }};
+    
+    quantityInput.addEventListener('input', function() {
+        const quantity = parseInt(this.value) || 1;
+        const total = unitPrice * quantity;
+        
+        quantityDisplay.textContent = quantity;
+        totalDisplay.textContent = 'R$ ' + total.toFixed(2);
+    });
+    
+    // Adiciona classes visuais aos métodos de pagamento selecionados
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            paymentMethods.forEach(m => m.style.borderColor = '#ddd');
+            this.style.borderColor = '#667eea';
+            this.querySelector('input[type="radio"]').checked = true;
+        });
+    });
+</script>
+{% endblock %}
